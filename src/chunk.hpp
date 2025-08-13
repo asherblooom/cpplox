@@ -6,6 +6,7 @@
 
 enum OpCode {
 	OP_CONSTANT,
+	OP_CONSTANT_LONG,
 	OP_RETURN,
 };
 
@@ -18,11 +19,11 @@ class Chunk {
 public:
 	// functions for accessing Code vector
 	void Write(unsigned char byte, int line);
+	void WriteConstant(Value value, int line);
 	size_t Size();
 	unsigned char operator[](int i);
 
 	// functions for accessing Constants vector
-	int AddConstant(Value constant);
 	Value GetConstant(int i);
 
 	// functions for accessing Lines vector

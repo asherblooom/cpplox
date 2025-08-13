@@ -6,6 +6,7 @@
 
 static int simpleInstruction(std::string opcode, int offset);
 static int constantInstruction(std::string opcode, Chunk& chunk, int offset);
+static int longConstantInstruction(std::string opcode, Chunk& chunk, int offset);
 
 void dissassembleChunk(Chunk& chunk, std::string name) {
 	std::cout << "== " << name << " ==\n";
@@ -31,6 +32,8 @@ int dissassembleInstruction(Chunk& chunk, int offset) {
 			return simpleInstruction("OP_RETURN", offset);
 		case OP_CONSTANT:
 			return constantInstruction("OP_CONSTANT", chunk, offset);
+		case OP_CONSTANT_LONG:
+			return longConstantInstruction("OP_CONSTANT_LONG", chunk, offset);
 		default:
 			std::cerr << "ERROR: Unknown opcode " << (unsigned int)instruction << "\n";
 			return offset + 1;
@@ -44,7 +47,14 @@ static int simpleInstruction(std::string opcode, int offset) {
 
 static int constantInstruction(std::string opcode, Chunk& chunk, int offset) {
 	unsigned char constantLoc = chunk[offset + 1];
-	printf("%-16s %04d      '", opcode.c_str(), constantLoc);
+	printf("%-16s %03d       '", opcode.c_str(), constantLoc);
 	std::cout << chunk.GetConstant(constantLoc) << "'\n";
 	return offset + 2;
+}
+
+static int longConstantInstruction(std::string opcode, Chunk& chunk, int offset) {
+	unsigned long constantLoc = ((unsigned long)chunk[offset + 1]) << 8 | ((unsigned long)chunk[offset + 2] << 4) | chunk[offset + 3];
+	printf("%-16s %08lu  '", opcode.c_str(), constantLoc);
+	std::cout << chunk.GetConstant(constantLoc) << "'\n";
+	return offset + 4;
 }

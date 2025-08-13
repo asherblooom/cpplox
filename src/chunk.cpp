@@ -1,4 +1,5 @@
 #include "chunk.hpp"
+#include <climits>
 
 void Chunk::Write(unsigned char byte, int line) {
 	Code.push_back(byte);
@@ -9,13 +10,22 @@ void Chunk::Write(unsigned char byte, int line) {
 		Lines.push_back({line, 1});
 	}
 }
+void Chunk::WriteConstant(Value value, int line) {
+	Constants.push_back(value);
+	int index = Constants.size() - 1;
+	if (index < UCHAR_MAX + 1) {
+		Write(OP_CONSTANT, line);
+		Write(index, line);
+	} else {
+		Write(OP_CONSTANT_LONG, line);
+		Write((unsigned char)(index >> 8), line);
+		Write((unsigned char)(index >> 4), line);
+		Write((unsigned char)index, line);
+	}
+}
 size_t Chunk::Size() { return Code.size(); }
 unsigned char Chunk::operator[](int i) { return Code.at(i); }
 
-int Chunk::AddConstant(Value constant) {
-	Constants.push_back(constant);
-	return Constants.size() - 1;
-}
 Value Chunk::GetConstant(int i) { return Constants.at(i); }
 
 int Chunk::GetLine(int instructionIndex) {

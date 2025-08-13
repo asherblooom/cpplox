@@ -1,6 +1,6 @@
 TARGET_EXEC := compiler
 CXX:=g++
-CXXFLAGS:=-I$(INC_DIR) -march=native -Wall -Wextra -Wno-unused-parameter -std=c++20
+CXXFLAGS:=-I$(INC_DIR) -march=native -Wall -Wextra -Wno-unused-parameter -std=c++20 
 OBJ_DIR:=./obj
 SRC_DIR:=./src
 
