@@ -9,7 +9,7 @@ static int constantInstruction(std::string opcode, Chunk& chunk, int offset);
 
 void dissassembleChunk(Chunk& chunk, std::string name) {
 	std::cout << "== " << name << " ==\n";
-	std::cout << "offset  line  opcode           conOff  conVal\n";
+	std::cout << "offset  line  opcode           constOff  constVal\n";
 	for (size_t offset = 0; offset < chunk.Size();) {
 		// we leave incrememnting offset to the ...Instruction functions
 		// as instructions can have different sizes
@@ -44,7 +44,7 @@ static int simpleInstruction(std::string opcode, int offset) {
 
 static int constantInstruction(std::string opcode, Chunk& chunk, int offset) {
 	unsigned char constantLoc = chunk[offset + 1];
-	printf("%-16s %04d    '", opcode.c_str(), constantLoc);
+	printf("%-16s %04d      '", opcode.c_str(), constantLoc);
 	std::cout << chunk.GetConstant(constantLoc) << "'\n";
 	return offset + 2;
 }

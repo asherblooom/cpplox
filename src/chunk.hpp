@@ -9,6 +9,11 @@ enum OpCode {
 	OP_RETURN,
 };
 
+struct Line {
+	int LineNumber;
+	int Count;
+};
+
 class Chunk {
 public:
 	// functions for accessing Code vector
@@ -26,7 +31,7 @@ public:
 private:
 	std::vector<unsigned char> Code;
 	std::vector<Value> Constants;
-	std::vector<int> Lines;
+	std::vector<Line> Lines;
 };
 
 #endif
