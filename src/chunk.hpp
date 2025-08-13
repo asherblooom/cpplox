@@ -20,14 +20,16 @@ public:
 	// functions for accessing Code vector
 	void Write(unsigned char byte, int line);
 	void WriteConstant(Value value, int line);
-	size_t Size();
-	unsigned char operator[](int i);
+	size_t size();
+	unsigned char& operator[](int i);
+	std::vector<unsigned char>::iterator begin();
+	std::vector<unsigned char>::iterator end();
 
 	// functions for accessing Constants vector
-	Value GetConstant(int i);
+	Value& GetConstant(int i);
 
 	// functions for accessing Lines vector
-	int GetLine(int i);
+	int& GetLine(int i);
 
 private:
 	std::vector<unsigned char> Code;

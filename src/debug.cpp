@@ -11,7 +11,7 @@ static int longConstantInstruction(std::string opcode, Chunk& chunk, int offset)
 void dissassembleChunk(Chunk& chunk, std::string name) {
 	std::cout << "== " << name << " ==\n";
 	std::cout << "offset  line  opcode           constOff  constVal\n";
-	for (size_t offset = 0; offset < chunk.Size();) {
+	for (size_t offset = 0; offset < chunk.size();) {
 		// we leave incrememnting offset to the ...Instruction functions
 		// as instructions can have different sizes
 		offset = dissassembleInstruction(chunk, offset);

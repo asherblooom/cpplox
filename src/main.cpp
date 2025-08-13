@@ -1,5 +1,6 @@
 #include "chunk.hpp"
 #include "debug.hpp"
+#include "vm.hpp"
 
 int main(int argc, char *argv[]) {
 	Chunk chunk;
@@ -10,6 +11,8 @@ int main(int argc, char *argv[]) {
 
 	chunk.Write(OP_RETURN, 123);
 
-	dissassembleChunk(chunk, "chunky");
+	// dissassembleChunk(chunk, "chunky");
+	VirtualMachine vm;
+	vm.Interpret(chunk);
 	return 0;
 }

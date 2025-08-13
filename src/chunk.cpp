@@ -23,12 +23,15 @@ void Chunk::WriteConstant(Value value, int line) {
 		Write((unsigned char)index, line);
 	}
 }
-size_t Chunk::Size() { return Code.size(); }
-unsigned char Chunk::operator[](int i) { return Code.at(i); }
 
-Value Chunk::GetConstant(int i) { return Constants.at(i); }
+size_t Chunk::size() { return Code.size(); }
+unsigned char& Chunk::operator[](int i) { return Code.at(i); }
+std::vector<unsigned char>::iterator Chunk::begin() { return Code.begin(); }
+std::vector<unsigned char>::iterator Chunk::end() { return Code.end(); }
 
-int Chunk::GetLine(int instructionIndex) {
+Value& Chunk::GetConstant(int i) { return Constants.at(i); }
+
+int& Chunk::GetLine(int instructionIndex) {
 	int j = 0;
 	int lineIndex = 0;
 	while (true) {
