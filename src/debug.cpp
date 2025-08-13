@@ -16,6 +16,7 @@ void dissassembleChunk(Chunk& chunk, std::string name) {
 		// as instructions can have different sizes
 		offset = dissassembleInstruction(chunk, offset);
 	}
+	std::cout << "\n";
 }
 
 int dissassembleInstruction(Chunk& chunk, int offset) {
