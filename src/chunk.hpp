@@ -27,8 +27,6 @@ public:
 	void WriteConstant(Value value, int line);
 	size_t size();
 	unsigned char& operator[](int i);
-	std::vector<unsigned char>::iterator begin();
-	std::vector<unsigned char>::iterator end();
 
 	// functions for accessing Constants vector
 	Value& GetConstant(int i);

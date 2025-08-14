@@ -7,9 +7,9 @@ static void repl();
 static void runFile(const std::string path);
 static std::string readFile(const std::string path);
 
-int main(int argc, char* argv[]) {
-	VirtualMachine vm;
+VirtualMachine vm;
 
+int main(int argc, char* argv[]) {
 	if (argc == 1) {
 		repl();
 	} else if (argc == 2) {
@@ -25,8 +25,7 @@ static void repl() {
 	std::string line;
 	std::cout << "> ";
 	while (getline(std::cin, line)) {
-		// interpret(line);
-		std::cout << line << "\n";
+		vm.Interpret(line);
 		std::cout << "> ";
 	}
 	std::cout << "\n";
@@ -35,7 +34,7 @@ static void repl() {
 
 static void runFile(const std::string path) {
 	std::string source = readFile(path);
-	InterpretResult result;	 // = interpret(source);
+	InterpretResult result = vm.Interpret(source);
 
 	if (result == INTERPRET_COMPILE_ERROR) exit(65);
 	if (result == INTERPRET_RUNTIME_ERROR) exit(70);
@@ -57,5 +56,7 @@ static std::string readFile(const std::string path) {
 	file.read(&contents[0], contents.size());
 	file.close();
 
+	// TODO: is this needed?
+	// contents.push_back('\0');
 	return contents;
 }

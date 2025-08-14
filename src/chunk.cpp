@@ -26,8 +26,6 @@ void Chunk::WriteConstant(Value value, int line) {
 
 size_t Chunk::size() { return Code.size(); }
 unsigned char& Chunk::operator[](int i) { return Code.at(i); }
-std::vector<unsigned char>::iterator Chunk::begin() { return Code.begin(); }
-std::vector<unsigned char>::iterator Chunk::end() { return Code.end(); }
 
 Value& Chunk::GetConstant(int i) { return Constants.at(i); }
 

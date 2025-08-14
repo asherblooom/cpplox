@@ -1,27 +1,27 @@
 #include "vm.hpp"
 #include <iostream>
 #include "common.hpp"
+#include "compiler.hpp"
 #include "debug.hpp"
 
 #define READ_BYTE() (*IP++)
 #define READ_CONSTANT() (CurrentChunk->GetConstant(READ_BYTE()))
 
-InterpretResult VirtualMachine::Interpret(Chunk& chunk) {
-	CurrentChunk = &chunk;
-	IP = chunk.begin();
-
-#ifdef DEBUG_TRACE_EXECUTION
-	std::cout << "offset  line  opcode           constOff  constVal\n";
-#endif
-
-	return run();
+InterpretResult VirtualMachine::Interpret(std::string source) {
+	Compiler compiler;
+	compiler.Compile(source);
+	return INTERPRET_OK;
 }
 
 InterpretResult VirtualMachine::run() {
-	while (IP != CurrentChunk->end()) {
+#ifdef DEBUG_TRACE_EXECUTION
+	std::cout << "offset  line  opcode           constOff  constVal\n";
+#endif
+	unsigned char end = (*CurrentChunk)[CurrentChunk->size() - 1] + 1;
+	while (IP != &end) {
 #ifdef DEBUG_TRACE_EXECUTION
 		outputStack(Stack);
-		dissassembleInstruction(*CurrentChunk, (int)(IP - CurrentChunk->begin()));
+		dissassembleInstruction(*CurrentChunk, (int)(IP - &(*CurrentChunk)[0]));
 #endif
 		unsigned char instruction;
 		switch (instruction = READ_BYTE()) {

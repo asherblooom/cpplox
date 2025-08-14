@@ -1,6 +1,7 @@
 #ifndef VM_HPP
 #define VM_HPP
 
+#include <string>
 #include "chunk.hpp"
 
 enum InterpretResult {
@@ -12,17 +13,17 @@ enum InterpretResult {
 class VirtualMachine {
 public:
 	Chunk* CurrentChunk;
-	std::vector<unsigned char>::iterator IP;
+	unsigned char* IP;
 
 	std::vector<Value> Stack;
-	std::vector<Value>::iterator StackTop() { return Stack.end(); };
+	Value* StackTop() { return &Stack.back() + 1; };
 	Value StackPop() {
 		Value val = Stack.back();
 		Stack.pop_back();
 		return val;
 	}
 
-	InterpretResult Interpret(Chunk& chunk);
+	InterpretResult Interpret(std::string source);
 
 private:
 	InterpretResult run();
