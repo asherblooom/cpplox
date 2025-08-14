@@ -14,10 +14,21 @@ public:
 	Chunk* CurrentChunk;
 	std::vector<unsigned char>::iterator IP;
 
+	std::vector<Value> Stack;
+	std::vector<Value>::iterator StackTop() { return Stack.end(); };
+	Value StackPop() {
+		Value val = Stack.back();
+		Stack.pop_back();
+		return val;
+	}
+
 	InterpretResult Interpret(Chunk& chunk);
 
 private:
 	InterpretResult run();
+
+	template <class Func>
+	void binaryOp(Func func);
 };
 
 #endif
