@@ -9,10 +9,11 @@ Scanner::Scanner(std::string src) {
 
 Token Scanner::ScanToken() {
 	start = current;
-	if (*current == '\0')
-		return Token(TOKEN_EOF, start, current - start, line);
 
 	skipWhitespace();
+	start = current;  // update start to reflect skipped whitespace
+	if (*current == '\0')
+		return Token(TOKEN_EOF, start, current - start, line);
 
 	char c = *current;
 	current++;
@@ -92,6 +93,7 @@ Token Scanner::string() {
 			case '\n':
 				line++;
 				current++;
+				break;
 			case '\0':
 				return ErrorToken("Unterminated string", line);
 			default:
@@ -109,7 +111,6 @@ Token Scanner::number() {
 		else if (c == '.' && (next >= '0' && next <= '9'))
 			current++;
 		else {
-			current++;
 			return Token(TOKEN_NUMBER, start, current - start, line);
 		}
 	}
@@ -125,8 +126,7 @@ Token Scanner::identifier() {
 		else if (c >= '0' && c <= '9')
 			current++;
 		else {
-			current++;
-			return Token(TOKEN_IDENTIFIER, start, current - start, line);
+			return Token(identifierType(), start, current - start, line);
 		}
 	}
 }
@@ -144,7 +144,8 @@ TokenType Scanner::identifierType() {
 					case 'o': return checkKeyword(2, 1, "r", TOKEN_FOR);
 					case 'u': return checkKeyword(2, 1, "n", TOKEN_FUN);
 				}
-			} else return TOKEN_IDENTIFIER;
+			}
+			break;
 		case 'i': return checkKeyword(1, 1, "f", TOKEN_IF);
 		case 'n': return checkKeyword(1, 2, "il", TOKEN_NIL);
 		case 'o': return checkKeyword(1, 1, "r", TOKEN_OR);
@@ -157,11 +158,12 @@ TokenType Scanner::identifierType() {
 					case 'h': return checkKeyword(2, 2, "is", TOKEN_THIS);
 					case 'r': return checkKeyword(2, 2, "ue", TOKEN_TRUE);
 				}
-			} else return TOKEN_IDENTIFIER;
+			}
+			break;
 		case 'v': return checkKeyword(1, 2, "ar", TOKEN_VAR);
 		case 'w': return checkKeyword(1, 4, "hile", TOKEN_WHILE);
-		default: return TOKEN_IDENTIFIER;
 	}
+	return TOKEN_IDENTIFIER;
 	// clang-format on
 }
 

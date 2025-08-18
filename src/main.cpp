@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 static void repl() {
 	std::string line;
 	std::cout << "> ";
-	while (getline(std::cin, line)) {
+	while (getline(std::cin, line, '\\')) {
 		vm.Interpret(line);
 		std::cout << "> ";
 	}
