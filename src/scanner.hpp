@@ -16,6 +16,11 @@ private:
 
 	bool match(char expected);
 	void skipWhitespace();
+	Token string();
+	Token number();
+	Token identifier();
+	TokenType identifierType();
+	TokenType checkKeyword(int offset, int restLength, const char* rest, TokenType type);
 };
 
 #endif

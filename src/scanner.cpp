@@ -1,4 +1,5 @@
 #include "scanner.hpp"
+#include "token.hpp"
 
 Scanner::Scanner(std::string src) {
 	start = &src[0];
@@ -16,6 +17,12 @@ Token Scanner::ScanToken() {
 	char c = *current;
 	current++;
 
+	if (c >= '0' && c <= '9')
+		return number();
+	else if ((c >= 'a' && c <= 'z') ||
+			 (c >= 'A' && c <= 'Z') ||
+			 (c == '_'))
+		return identifier();
 	// clang-format off
 	switch (c) {
 		case '(': return Token(TOKEN_LEFT_PAREN, start, current - start, line);
@@ -37,6 +44,7 @@ Token Scanner::ScanToken() {
 			return Token(match('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS, start, current - start, line);
 		case '>':
 			return Token(match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER, start, current - start, line);
+		case '"': return string();
 	}
 	// clang-format on
 
@@ -72,4 +80,95 @@ void Scanner::skipWhitespace() {
 				return;
 		}
 	}
+}
+
+Token Scanner::string() {
+	while (true) {
+		char c = *current;
+		switch (c) {
+			case '"':
+				current++;
+				return Token(TOKEN_STRING, start, current - start, line);
+			case '\n':
+				line++;
+				current++;
+			case '\0':
+				return ErrorToken("Unterminated string", line);
+			default:
+				current++;
+		}
+	}
+}
+
+Token Scanner::number() {
+	while (true) {
+		char c = *current;
+		char next = current[1];
+		if (c >= '0' && c <= '9')
+			current++;
+		else if (c == '.' && (next >= '0' && next <= '9'))
+			current++;
+		else {
+			current++;
+			return Token(TOKEN_NUMBER, start, current - start, line);
+		}
+	}
+}
+
+Token Scanner::identifier() {
+	while (true) {
+		char c = *current;
+		if ((c >= 'a' && c <= 'z') ||
+			(c >= 'A' && c <= 'Z') ||
+			(c == '_'))
+			current++;
+		else if (c >= '0' && c <= '9')
+			current++;
+		else {
+			current++;
+			return Token(TOKEN_IDENTIFIER, start, current - start, line);
+		}
+	}
+}
+
+TokenType Scanner::identifierType() {
+	// clang-format off
+	switch(*start){
+		case 'a': return checkKeyword(1, 2, "nd", TOKEN_AND);
+		case 'c': return checkKeyword(1, 4, "lass", TOKEN_CLASS);
+		case 'e': return checkKeyword(1, 3, "lse", TOKEN_ELSE);
+		case 'f':
+			if (current - start > 1) {
+				switch (start[1]) {
+					case 'a': return checkKeyword(2, 3, "lse", TOKEN_FALSE);
+					case 'o': return checkKeyword(2, 1, "r", TOKEN_FOR);
+					case 'u': return checkKeyword(2, 1, "n", TOKEN_FUN);
+				}
+			} else return TOKEN_IDENTIFIER;
+		case 'i': return checkKeyword(1, 1, "f", TOKEN_IF);
+		case 'n': return checkKeyword(1, 2, "il", TOKEN_NIL);
+		case 'o': return checkKeyword(1, 1, "r", TOKEN_OR);
+		case 'p': return checkKeyword(1, 4, "rint", TOKEN_PRINT);
+		case 'r': return checkKeyword(1, 5, "eturn", TOKEN_RETURN);
+		case 's': return checkKeyword(1, 4, "uper", TOKEN_SUPER);
+		case 't':
+			if (current - start > 1) {
+				switch (start[1]) {
+					case 'h': return checkKeyword(2, 2, "is", TOKEN_THIS);
+					case 'r': return checkKeyword(2, 2, "ue", TOKEN_TRUE);
+				}
+			} else return TOKEN_IDENTIFIER;
+		case 'v': return checkKeyword(1, 2, "ar", TOKEN_VAR);
+		case 'w': return checkKeyword(1, 4, "hile", TOKEN_WHILE);
+		default: return TOKEN_IDENTIFIER;
+	}
+	// clang-format on
+}
+
+TokenType Scanner::checkKeyword(int offset, int restLength, const char* rest, TokenType type) {
+	if (current - start == offset + restLength &&
+		memcmp(start + offset, rest, restLength) == 0) {
+		return type;
+	} else
+		return TOKEN_IDENTIFIER;
 }
