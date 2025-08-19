@@ -2,17 +2,17 @@
 #include <climits>
 
 void Chunk::Write(unsigned char byte, int line) {
-	Code.push_back(byte);
-	int size = Lines.size() - 1;
-	if (size != -1 && Lines.at(size).LineNumber == line) {
-		Lines.at(size).Count += 1;
+	code.push_back(byte);
+	int size = lines.size() - 1;
+	if (size != -1 && lines.at(size).LineNumber == line) {
+		lines.at(size).Count += 1;
 	} else {
-		Lines.push_back({line, 1});
+		lines.push_back({line, 1});
 	}
 }
 void Chunk::WriteConstant(Value value, int line) {
-	Constants.push_back(value);
-	int index = Constants.size() - 1;
+	constants.push_back(value);
+	int index = constants.size() - 1;
 	if (index < UCHAR_MAX + 1) {
 		Write(OP_CONSTANT, line);
 		Write(index, line);
@@ -24,16 +24,16 @@ void Chunk::WriteConstant(Value value, int line) {
 	}
 }
 
-size_t Chunk::size() { return Code.size(); }
-unsigned char& Chunk::operator[](int i) { return Code.at(i); }
+size_t Chunk::size() { return code.size(); }
+unsigned char& Chunk::operator[](int i) { return code.at(i); }
 
-Value& Chunk::GetConstant(int i) { return Constants.at(i); }
+Value& Chunk::GetConstant(int i) { return constants.at(i); }
 
 int& Chunk::GetLine(int instructionIndex) {
 	int j = 0;
 	int lineIndex = 0;
 	while (true) {
-		Line currLine = Lines.at(lineIndex);
+		Line currLine = lines.at(lineIndex);
 		// increment j currline.Count times or until it is at correct instruction
 		for (int k = 0; k < currLine.Count; k++) {
 			if (j == instructionIndex) goto endloop;
@@ -42,5 +42,5 @@ int& Chunk::GetLine(int instructionIndex) {
 		lineIndex++;
 	}
 endloop:
-	return Lines.at(lineIndex).LineNumber;
+	return lines.at(lineIndex).LineNumber;
 }

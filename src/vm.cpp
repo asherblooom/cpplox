@@ -8,9 +8,15 @@
 #define READ_CONSTANT() (CurrentChunk->GetConstant(READ_BYTE()))
 
 InterpretResult VirtualMachine::Interpret(std::string source) {
+	Chunk chunk;
 	Compiler compiler;
-	compiler.Compile(source);
-	return INTERPRET_OK;
+	if (!compiler.Compile(source, chunk))
+		return INTERPRET_COMPILE_ERROR;
+
+	this->CurrentChunk = &chunk;
+	this->IP = &(*this->CurrentChunk)[0];
+	InterpretResult result = run();
+	return result;
 }
 
 InterpretResult VirtualMachine::run() {
@@ -57,6 +63,7 @@ InterpretResult VirtualMachine::run() {
 			}
 		}
 	}
+	return INTERPRET_RUNTIME_ERROR;
 }
 
 template <class Func>
