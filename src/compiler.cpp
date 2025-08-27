@@ -42,6 +42,28 @@ void Compiler::unary() {
 			return;
 	}
 }
+void Compiler::binary() {
+	TokenType operatorType = parser.Previous.Type;
+	ParseRule* rule = getRule(operatorType);
+	parsePrecedence((Precedence)(rule->precedence + 1));
+
+	switch (operatorType) {
+		case TOKEN_PLUS:
+			writeBytes({OP_ADD});
+			break;
+		case TOKEN_MINUS:
+			writeBytes({OP_SUBTRACT});
+			break;
+		case TOKEN_STAR:
+			writeBytes({OP_MULTIPLY});
+			break;
+		case TOKEN_SLASH:
+			writeBytes({OP_DIVIDE});
+			break;
+		default:
+			return;	 // Unreachable.
+	}
+}
 
 Parser::Parser(std::string src)
 	: HadError{false},
