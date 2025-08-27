@@ -66,7 +66,7 @@ private:
 	void binary();
 	void parsePrecedence(Precedence precedence);
 
-	static constexpr std::array<ParseRule, 30> makeParseRules() {
+	static std::array<ParseRule, 30> makeParseRules() {
 		std::array<ParseRule, 30> res{};
 		// clang-format off
 		res[TOKEN_LEFT_PAREN]    = {&Compiler::grouping, NULL,              PREC_NONE},
@@ -112,7 +112,7 @@ private:
 		// clang-format on
 		return res;
 	}
-	static constexpr std::array<ParseRule, 30> rules = makeParseRules();
+	std::array<ParseRule, 30> rules = makeParseRules();
 };
 
 #endif
